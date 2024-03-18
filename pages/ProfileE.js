@@ -1,5 +1,5 @@
 import React from 'react';
-import { View,Dimensions, Image, Text, TouchableOpacity} from 'react-native';
+import { View,Dimensions, Image, TextInput, TouchableOpacity} from 'react-native';
 import { useFonts } from '@use-expo/font';
 import { useNavigation } from '@react-navigation/native';
 import * as ScreenOrientation from 'expo-screen-orientation'
@@ -205,19 +205,19 @@ function ProfileE() {
 
       <Image source={require('../assets/Name.png')} style={namepic}/>
 
-      <input type={'name'} placeholder={'Name'} style={name} defaultValue={username}/>
+      <TextInput type={'name'} placeholder={'Name'} style={name} defaultValue={username}/>
 
       <Image source={require('../assets/Date.png')} style={datepic}/>
 
-      <input type={'date'} style={dates}  defaultValue={date.toISOString().slice(0, 10)}/>
+      <TextInput type={'date'} style={dates}  defaultValue={date.toISOString().slice(0, 10)}/>
 
       <Image source={require('../assets/Height.png')} style={heightpic}/>
 
-      <input type={'height'} placeholder={'Height'} style={heights} defaultValue={height}/>
+      <TextInput type={'height'} placeholder={'Height'} style={heights} defaultValue={height}/>
 
       <Image source={require('../assets/Weight.png')} style={weightpic}/>
 
-      <input type={'weight'} placeholder={'Weight'} style={weights} defaultValue={weight}/>  
+      <TextInput type={'weight'} placeholder={'Weight'} style={weights} defaultValue={weight}/>  
 
       <TouchableOpacity onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={nextbutton}>Save</TouchableOpacity>
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View,Dimensions, Image, Text } from 'react-native';
+import { View,Dimensions, Image, Text, TextInput, TouchableOpacity } from 'react-native';
 import { useFonts } from '@use-expo/font';
 import { useNavigation } from '@react-navigation/native';
 import * as ScreenOrientation from 'expo-screen-orientation'
@@ -109,11 +109,11 @@ function EmailPR() {
   return (
     <View style={background}>
 
-      <h1 style={textrp}>Reset Password</h1>
+      <Text style={textrp}>Reset Password</Text>
 
-      <input type={'email'} placeholder='Email' style={email}/>
+      <TextInput type={'email'} placeholder='Email' style={email}/>
 
-      <button onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={nextbutton}>Next</button>
+      <TouchableOpacity onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={nextbutton}>Next</TouchableOpacity>
 
       <Image onClick = {clicked} source={require('../../assets/back.png')} style={backbutton}/>
 

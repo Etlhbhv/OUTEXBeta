@@ -1,5 +1,5 @@
 import React from 'react';
-import { View,Dimensions, Image, Text } from 'react-native';
+import { View,Dimensions, Image, Text, TextInput, TouchableOpacity } from 'react-native';
 import { useFonts } from '@use-expo/font';
 import { useNavigation } from '@react-navigation/native';
 import * as ScreenOrientation from 'expo-screen-orientation'
@@ -129,13 +129,13 @@ function Reset() {
   return (
     <View style={background}>
 
-      <h1 style={textrp}>Reset Password</h1>
+      <Text style={textrp}>Reset Password</Text>
 
-      <input type={'password'} placeholder='Password' style={password}/>
+      <TextInput type={'password'} placeholder='Password' style={password}/>
 
-      <input type={'password'} placeholder='Repeat password' style={repeatpassword}/>
+      <TextInput type={'password'} placeholder='Repeat password' style={repeatpassword}/>
 
-      <button onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={nextbutton}>Next</button>
+      <TouchableOpacity onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={nextbutton}>Next</TouchableOpacity>
 
       <Image onClick = {clicked} source={require('../../assets/back.png')} style={backbutton}/>
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View,Dimensions, Text } from 'react-native';
+import { View,Dimensions, Text, TextInput, TouchableOpacity } from 'react-native';
 import { useFonts } from '@use-expo/font';
 import { useNavigation } from '@react-navigation/native';
 import * as ScreenOrientation from 'expo-screen-orientation'
@@ -142,13 +142,13 @@ function SignUp() {
   return (
     <View style={background}>
 
-      <h1 style={textsignup}>Sign Up</h1>
+      <Text style={textsignup}>Sign Up</Text>
 
-      <input type={'email'} placeholder='Email' style={email}/>
+      <TextInput type={'email'} placeholder='Email' style={email}/>
 
-      <input type={'password'} placeholder='Password' style={password}/>
+      <TextInput type={'password'} placeholder='Password' style={password}/>
 
-      <button onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={signupbutton}>Join</button>
+      <TouchableOpacity onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={signupbutton}>Join</TouchableOpacity>
 
       <View style={bottom}>
 

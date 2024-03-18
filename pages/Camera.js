@@ -1,6 +1,6 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
-import { View,Dimensions, Image,Text} from 'react-native';
+import { View,Dimensions, Image,TouchableOpacity} from 'react-native';
 import { useFonts } from '@use-expo/font';
 import { useNavigation } from '@react-navigation/native';
 import Svg, { Rect } from 'react-native-svg';
@@ -105,7 +105,7 @@ function Camera() {
   return (
     <View style={background}>
 
-      <button onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={nextbutton}>Skip</button>
+      <TouchableOpacity onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={nextbutton}>Skip</TouchableOpacity>
 
       <Image onClick = {clicked} source={require('../assets/back.png')} style={backbutton}/>
 

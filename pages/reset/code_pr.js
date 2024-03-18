@@ -1,5 +1,5 @@
 import React from 'react';
-import { View,Dimensions, Image, Text } from 'react-native';
+import { View,Dimensions, Image, Text, TextInput } from 'react-native';
 import { useFonts } from '@use-expo/font';
 import { useNavigation } from '@react-navigation/native';
 import * as ScreenOrientation from 'expo-screen-orientation'
@@ -97,9 +97,9 @@ function CodePR() {
   return (
     <View style={background}>
 
-      <h1 style={textrp}>Verification Code</h1>
+      <Text style={textrp}>Verification Code</Text>
 
-      <input type={'password'} placeholder='Code' style={code}/>
+      <TextInput type={'password'} placeholder='Code' style={code}/>
 
       <Image onClick = {clicked} source={require('../../assets/back.png')} style={backbutton}/>
 

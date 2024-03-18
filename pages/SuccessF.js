@@ -1,6 +1,6 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
-import { View,Dimensions, Image,Text} from 'react-native';
+import { View,Dimensions, Image,Text, TouchableOpacity} from 'react-native';
 import { useFonts } from '@use-expo/font';
 import { useNavigation } from '@react-navigation/native';
 import Svg, { Rect } from 'react-native-svg';
@@ -90,7 +90,7 @@ function SuccessF() {
   return (
     <View style={background}>
 
-      <button onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={nextbutton}>Finish</button>
+      <TouchableOpacity onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={nextbutton}>Finish</TouchableOpacity>
 
       <Image onClick = {clicked} source={require('../assets/back.png')} style={backbutton}/>
 

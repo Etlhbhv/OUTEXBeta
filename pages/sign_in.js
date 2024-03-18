@@ -1,5 +1,5 @@
 import React from 'react';
-import { View,Dimensions, Text } from 'react-native';
+import { View,Dimensions, Text, TextInput, TouchableOpacity } from 'react-native';
 import { useFonts } from '@use-expo/font';
 import { useNavigation } from '@react-navigation/native';
 import * as ScreenOrientation from 'expo-screen-orientation'
@@ -180,13 +180,13 @@ function SignIn() {
   return (
     <View style={background}>
 
-      <h1 style={textsignin}>Sign In</h1>
+      <Text style={textsignin}>Sign In</Text>
 
-      <input type={'email'} placeholder='Email' style={email}/>
+      <TextInput type={'email'} placeholder='Email' style={email}/>
 
-      <input type={'password'} placeholder='Password' style={password}/>
+      <TextInput type={'password'} placeholder='Password' style={password}/>
 
-      <button onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={signinbutton}>Log In</button>
+      <TouchableOpacity onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={signinbutton}>Log In</TouchableOpacity>
 
       <Text style ={forgotbutton} onClick = {clickedForgot}>Forgot your password?</Text>
 

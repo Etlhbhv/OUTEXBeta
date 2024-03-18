@@ -1,5 +1,5 @@
 import React from 'react';
-import { View,Dimensions, Image, Text} from 'react-native';
+import { View,Dimensions, Image, Text, TouchableOpacity} from 'react-native';
 import { Video } from 'expo-av';
 import { useFonts } from '@use-expo/font';
 import { useNavigation } from '@react-navigation/native';
@@ -164,7 +164,7 @@ function Exercise() {
 
       </View>
 
-      <button onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={nextbutton}>Next</button>
+      <TouchableOpacity onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={nextbutton}>Next</TouchableOpacity>
 
       <Image onClick = {clicked} source={require('../assets/back.png')} style={backbutton}/>
 
@@ -172,7 +172,7 @@ function Exercise() {
 
     </View>
   ); 
-
+s
 //Add later <Text style={warning}>Email is invalid, or isn't registered.</Text>
 
 }
