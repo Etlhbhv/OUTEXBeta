@@ -3,13 +3,53 @@ import { View,Dimensions, Image, TextInput, TouchableOpacity} from 'react-native
 import { useFonts } from '@use-expo/font';
 import { useNavigation } from '@react-navigation/native';
 import * as ScreenOrientation from 'expo-screen-orientation'
-import { useEffect} from 'react';
+import { useEffect, useState} from 'react';
+import { getAuth} from "firebase/auth";
+import { initializeApp } from 'firebase/app';
+import firebaseConfig from '../firebaseConfig';
+import {getFirestore, getDoc, doc, setDoc} from 'firebase/firestore'
+
+initializeApp(firebaseConfig);
+
+const auth = getAuth();
+const base = getFirestore();
 
 function ProfileE() {
-  const username = 'Name';
-  const height = 'Height';
-  const weight = 'Weight';
-  const date = new Date(1990,1,1);
+
+  const [username, setName] = useState('');
+  const [height, setHeight] = useState('');
+  const [weight, setWeight] = useState('');
+  const [date, setDate] = useState("");
+
+  const uid = auth.currentUser?.uid;
+
+const getdocs = async () =>{
+  try{
+  const docRef = doc(base, "User",uid);
+const docSnap = await getDoc(docRef);
+if (docSnap.exists()) {
+  setName(docSnap.data().username);
+  setHeight(docSnap.data().height);
+  setWeight(docSnap.data().weight);
+  setDate(docSnap.data().birthdate);
+} else {
+  console.log("No such document!");}}
+  catch (error) {
+    console.error('Error getting doc:', error);}
+}
+
+const setdocs = async () =>{
+  try{
+  await setDoc(doc(base, "User", uid), {
+    username: username,
+    birthdate: date,
+    height: height,
+    weight: weight
+  });}
+  catch (error) {
+    console.error('Error creating doc:', error);}
+}
+
   const navigation = useNavigation();
   const screenHeight = Dimensions.get('window').height;
   const screenWidth = Dimensions.get('window').width
@@ -22,6 +62,8 @@ function ProfileE() {
   const handleTouchStart = () => {
     setActive(true);
     console.log('Clicked save');
+    setdocs();
+    navigation.navigate("Profile");
   }
   const handleTouchEnd = () => setActive(false);
   
@@ -180,44 +222,34 @@ function ProfileE() {
     position: 'absolute'
   }
 
-  const picture = {
-    width: screenWidth*0.5,
-    height: screenWidth*0.5,
-    marginTop: screenWidth*0.25,
-    marginLeft: screenWidth*0.25,
-    position: 'absolute',
-    borderRadius: screenWidth*0.25,
-    borderWidth: 15,
-    borderColor: '#F3831E',
-  }
-
   const clicked = () => {
     console.log('Clicked back');
+    navigation.goBack();
   }
 
   useEffect(() => {
+    getdocs();
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
   }, []);
 
   return (
     <View style={background}>
-      <Image source={require('../assets/photo.jpeg')} style={picture}/>
 
       <Image source={require('../assets/Name.png')} style={namepic}/>
 
-      <TextInput type={'name'} placeholder={'Name'} style={name} defaultValue={username}/>
+      <TextInput type={'name'} placeholder={'Name'} style={name} defaultValue={username} onChangeText={(text) => setName(text)}/>
 
       <Image source={require('../assets/Date.png')} style={datepic}/>
 
-      <TextInput type={'date'} style={dates}  defaultValue={date.toISOString().slice(0, 10)}/>
+      <TextInput type={'name'} style={dates} placeholder={'Date of birth'} defaultValue={date} onChangeText={(text) => setDate(text)}/>
 
       <Image source={require('../assets/Height.png')} style={heightpic}/>
 
-      <TextInput type={'height'} placeholder={'Height'} style={heights} defaultValue={height}/>
+      <TextInput type={'height'} placeholder={'Height cm'} style={heights} defaultValue={height} onChangeText={(text) => setHeight(text)}/>
 
       <Image source={require('../assets/Weight.png')} style={weightpic}/>
 
-      <TextInput type={'weight'} placeholder={'Weight'} style={weights} defaultValue={weight}/>  
+      <TextInput type={'weight'} placeholder={'Weight kg'} style={weights} defaultValue={weight} onChangeText={(text) => setWeight(text)}/>  
 
       <TouchableOpacity onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={nextbutton}>Save</TouchableOpacity>
 

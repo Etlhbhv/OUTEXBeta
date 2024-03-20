@@ -26,7 +26,6 @@ function SignUp() {
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      console.log(user)
       navigation.navigate("Profile");}})
   
   const textsignup = {

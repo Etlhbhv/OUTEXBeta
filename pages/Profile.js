@@ -1,12 +1,37 @@
 import React from 'react';
 import { View,Dimensions, Image, Text, TouchableOpacity } from 'react-native';
 import { useFonts } from '@use-expo/font';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation} from '@react-navigation/native';
 import * as ScreenOrientation from 'expo-screen-orientation'
-import { useEffect} from 'react';
+import { useEffect, useState} from 'react';
+import { getAuth} from "firebase/auth";
+import { initializeApp } from 'firebase/app';
+import firebaseConfig from '../firebaseConfig';
+import {getFirestore, getDoc, doc} from 'firebase/firestore'
+
+initializeApp(firebaseConfig);
+
+const auth = getAuth();
+const base = getFirestore();
 
 function Profile() {
-  const username = 'Ernest';
+
+const uid = auth.currentUser?.uid;
+
+const getdocs = async () =>{
+  try {
+  const docRef = doc(base, "User",uid);
+const docSnap = await getDoc(docRef);
+if (docSnap.exists()) {
+  setName(docSnap.data().username);
+} else {
+  console.log("No such document!");}}
+  catch (error) {
+    console.error('Error getting doc:', error);
+}}
+
+const [username, setName] = useState('');
+
   const navigation = useNavigation();
   const screenHeight = Dimensions.get('window').height;
   const screenWidth = Dimensions.get('window').width
@@ -19,6 +44,7 @@ function Profile() {
   const handleTouchStart = () => {
     setActive(true);
     console.log('Clicked edit');
+    navigation.navigate("ProfileE");
   }
   const handleTouchEnd = () => setActive(false);
   
@@ -75,28 +101,18 @@ function Profile() {
     marginTop: screenHeight*0.43
   }
 
-  const picture = {
-    width: screenWidth*0.5,
-    height: screenWidth*0.5,
-    marginTop: screenWidth*0.25,
-    marginLeft: screenWidth*0.25,
-    position: 'absolute',
-    borderRadius: screenWidth*0.25,
-    borderWidth: 15,
-    borderColor: '#F3831E',
-  }
 
   const clicked = () => {
     console.log('Clicked back');
   }
 
   useEffect(() => {
+    getdocs();
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
   }, []);
 
   return (
     <View style={background}>
-      <Image source={require('../assets/photo.jpeg')} style={picture}/>
 
       <Text style={textrp}>{username}</Text>
 
