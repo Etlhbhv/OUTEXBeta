@@ -3,7 +3,14 @@ import { View,Dimensions, Text, TextInput, TouchableOpacity } from 'react-native
 import { useFonts } from '@use-expo/font';
 import { useNavigation } from '@react-navigation/native';
 import * as ScreenOrientation from 'expo-screen-orientation'
-import { useEffect} from 'react';
+import { useEffect, useState} from 'react';
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { initializeApp } from 'firebase/app';
+import firebaseConfig from '../firebaseConfig';
+
+initializeApp(firebaseConfig);
+
+const auth = getAuth();
 
 function SignUp() {
   const navigation = useNavigation();
@@ -15,10 +22,6 @@ function SignUp() {
     'LeagueSpartan-SemiBold': require('../assets/fonts/LeagueSpartan-SemiBold.ttf')
     });
 
-  const handleTouchStart = () => {
-    setActive(true);
-    console.log('Clicked sign up button');
-  }
   const handleTouchEnd = () => setActive(false);
   
 
@@ -135,6 +138,21 @@ function SignUp() {
     navigation.navigate('SignIn');
   }
 
+  const [em, setEmail] = useState('');
+  const [pass, setPassword] = useState('');
+
+  const handleSignUp = async () => {
+    setActive(true);
+    console.log('Clicked sign up button');
+    try {
+      await createUserWithEmailAndPassword(auth ,em, pass);
+      console.log('User signed up successfully!');
+    } catch (error) {
+      console.error('Error signing up:', error);
+    }
+    navigation.navigate('SignIn');
+  };
+
   useEffect(() => {
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
   }, []);
@@ -144,11 +162,11 @@ function SignUp() {
 
       <Text style={textsignup}>Sign Up</Text>
 
-      <TextInput type={'email'} placeholder='Email' style={email}/>
+      <TextInput type={'email'} placeholder='Email' style={email} onChangeText={(text) => setEmail(text)} value={em}/>
 
-      <TextInput type={'password'} placeholder='Password' style={password}/>
+      <TextInput type={'password'} placeholder='Password' style={password} onChangeText={(text) => setPassword(text)} value={pass}/>
 
-      <TouchableOpacity onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={signupbutton}>Join</TouchableOpacity>
+      <TouchableOpacity onTouchStart={handleSignUp} onTouchEnd={handleTouchEnd} style={signupbutton}>Join</TouchableOpacity>
 
       <View style={bottom}>
 

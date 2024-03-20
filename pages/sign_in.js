@@ -3,7 +3,14 @@ import { View,Dimensions, Text, TextInput, TouchableOpacity } from 'react-native
 import { useFonts } from '@use-expo/font';
 import { useNavigation } from '@react-navigation/native';
 import * as ScreenOrientation from 'expo-screen-orientation'
-import { useEffect} from 'react';
+import { useEffect, useState} from 'react';
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { initializeApp } from 'firebase/app';
+import firebaseConfig from '../firebaseConfig';
+
+initializeApp(firebaseConfig);
+
+const auth = getAuth();
 
 function SignIn() {
   const navigation = useNavigation();
@@ -16,10 +23,6 @@ function SignIn() {
     'LeagueSpartan-Regular': require('../assets/fonts/LeagueSpartan-Regular.ttf')
     });
 
-  const handleTouchStart = () => {
-    setActive(true);
-    console.log('Clicked sign in button');
-  }
   const handleTouchEnd = () => setActive(false);
   
 
@@ -151,6 +154,21 @@ function SignIn() {
     navigation.navigate('EmailPR')
   }
 
+  const [em, setEmail] = useState('');
+  const [pass, setPassword] = useState('');
+
+  const handleSignIn = async () => {
+    setActive(true);
+    console.log('Clicked sign in button');
+    try {
+      await signInWithEmailAndPassword(auth ,em, pass);
+      console.log('User signed in successfully!');
+    } catch (error) {
+      console.error('Error signing in:', error);
+    }
+    navigation.navigate('SignUp');
+  };
+
   const warningemail = {
     color: '#EF0000',
   fontFamily: 'LeagueSpartan-Regular',
@@ -182,11 +200,11 @@ function SignIn() {
 
       <Text style={textsignin}>Sign In</Text>
 
-      <TextInput type={'email'} placeholder='Email' style={email}/>
+      <TextInput type={'email'} placeholder='Email' style={email} onChangeText={(text) => setEmail(text)} value={em}/>
 
-      <TextInput type={'password'} placeholder='Password' style={password}/>
+      <TextInput type={'password'} placeholder='Password' style={password} onChangeText={(text) => setPassword(text)} value={pass}/>
 
-      <TouchableOpacity onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={signinbutton}>Log In</TouchableOpacity>
+      <TouchableOpacity onTouchStart={handleSignIn} onTouchEnd={handleTouchEnd} style={signinbutton}>Log In</TouchableOpacity>
 
       <Text style ={forgotbutton} onClick = {clickedForgot}>Forgot your password?</Text>
 
