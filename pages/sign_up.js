@@ -4,7 +4,7 @@ import { useFonts } from '@use-expo/font';
 import { useNavigation } from '@react-navigation/native';
 import * as ScreenOrientation from 'expo-screen-orientation'
 import { useEffect, useState} from 'react';
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { initializeApp } from 'firebase/app';
 import firebaseConfig from '../firebaseConfig';
 
@@ -23,8 +23,12 @@ function SignUp() {
     });
 
   const handleTouchEnd = () => setActive(false);
-  
 
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      console.log(user)
+      navigation.navigate("Profile");}})
+  
   const textsignup = {
     color: '#ffffff',
   fontFamily: 'LeagueSpartan-SemiBold',
@@ -150,7 +154,6 @@ function SignUp() {
     } catch (error) {
       console.error('Error signing up:', error);
     }
-    navigation.navigate('SignIn');
   };
 
   useEffect(() => {

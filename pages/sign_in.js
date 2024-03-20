@@ -4,7 +4,7 @@ import { useFonts } from '@use-expo/font';
 import { useNavigation } from '@react-navigation/native';
 import * as ScreenOrientation from 'expo-screen-orientation'
 import { useEffect, useState} from 'react';
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { initializeApp } from 'firebase/app';
 import firebaseConfig from '../firebaseConfig';
 
@@ -166,7 +166,6 @@ function SignIn() {
     } catch (error) {
       console.error('Error signing in:', error);
     }
-    navigation.navigate('SignUp');
   };
 
   const warningemail = {
@@ -194,6 +193,10 @@ function SignIn() {
   useEffect(() => {
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
   }, []);
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      navigation.navigate("Profile");}})
   
   return (
     <View style={background}>

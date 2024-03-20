@@ -3,7 +3,14 @@ import { View,Dimensions, Image, Text, TextInput, TouchableOpacity } from 'react
 import { useFonts } from '@use-expo/font';
 import { useNavigation } from '@react-navigation/native';
 import * as ScreenOrientation from 'expo-screen-orientation'
-import { useEffect} from 'react';
+import { useEffect, useState} from 'react';
+import { getAuth, sendPasswordResetEmail } from "firebase/auth";
+import { initializeApp } from 'firebase/app';
+import firebaseConfig from '../../firebaseConfig';
+
+initializeApp(firebaseConfig);
+
+const auth = getAuth();
 
 function EmailPR() {
   const navigation = useNavigation();
@@ -16,9 +23,16 @@ function EmailPR() {
     'LeagueSpartan-Regular': require('../../assets/fonts/LeagueSpartan-Regular.ttf')
     });
 
-  const handleTouchStart = () => {
+  const [em, setEmail] = useState('');
+
+  const handleTouchStart = async () => {
     setActive(true);
-    navigation.navigate('CodePR');
+    try{
+    await sendPasswordResetEmail(auth,em)
+  } catch (error) {
+    console.error('Error reseting:', error);
+  }
+    navigation.navigate("SignIn");
   }
   const handleTouchEnd = () => setActive(false);
   
@@ -87,6 +101,17 @@ function EmailPR() {
     boxShadow: '0 2px 5px rgba(0, 0, 0, 1)'
   }
   
+  const info = {
+    color: '#ffffff',
+  fontFamily: 'LeagueSpartan-Regular',
+  fontSize: screenAverage*0.02,
+  textAlign: 'center',
+  position: 'absolute',
+  alignSelf: 'center',
+  marginTop: screenHeight*0.4,
+  width: '60%'
+  }
+
   const warning = {
     color: '#EF0000',
   fontFamily: 'LeagueSpartan-Regular',
@@ -111,9 +136,11 @@ function EmailPR() {
 
       <Text style={textrp}>Reset Password</Text>
 
-      <TextInput type={'email'} placeholder='Email' style={email}/>
+      <TextInput type={'email'} placeholder='Email' style={email} onChangeText={(text) => setEmail(text)} value={em}/>
 
-      <TouchableOpacity onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={nextbutton}>Next</TouchableOpacity>
+      <Text style={info}>You will recieve an email. With instructions to reset your password.</Text>
+
+      <TouchableOpacity onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={nextbutton}>Reset</TouchableOpacity>
 
       <Image onClick = {clicked} source={require('../../assets/back.png')} style={backbutton}/>
 
