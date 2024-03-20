@@ -1,5 +1,5 @@
 import React from 'react';
-import { View,Dimensions, Image, TextInput, TouchableOpacity} from 'react-native';
+import { View,Dimensions, Image, TextInput, TouchableOpacity, Text} from 'react-native';
 import { useFonts } from '@use-expo/font';
 import { useNavigation } from '@react-navigation/native';
 import * as ScreenOrientation from 'expo-screen-orientation'
@@ -8,6 +8,7 @@ import { getAuth} from "firebase/auth";
 import { initializeApp } from 'firebase/app';
 import firebaseConfig from '../firebaseConfig';
 import {getFirestore, getDoc, doc, setDoc} from 'firebase/firestore'
+import Loading from './Loading';
 
 initializeApp(firebaseConfig);
 
@@ -54,18 +55,15 @@ const setdocs = async () =>{
   const screenHeight = Dimensions.get('window').height;
   const screenWidth = Dimensions.get('window').width
   const screenAverage = (screenWidth+(2*screenHeight))/3;
-  const [active, setActive] = React.useState(false);
   const [isLoaded] = useFonts({
     'LeagueSpartan-SemiBold': require('../assets/fonts/LeagueSpartan-SemiBold.ttf')
     });
 
   const handleTouchStart = () => {
-    setActive(true);
     console.log('Clicked save');
     setdocs();
     navigation.navigate("Profile");
   }
-  const handleTouchEnd = () => setActive(false);
   
   const background = {
     backgroundColor: '#2A2B30',
@@ -77,7 +75,7 @@ const setdocs = async () =>{
   };
 
   const nextbutton = {
-    backgroundColor: active ? '#C46B1B' : '#F3831E',
+    backgroundColor: '#F3831E',
     fontFamily: 'LeagueSpartan-SemiBold',
     fontSize: screenAverage*0.05,
     alignSelf: 'center',
@@ -98,27 +96,21 @@ const setdocs = async () =>{
     marginTop: screenWidth*0.05,
     marginLeft: screenWidth*0.05,
     position: 'absolute',
-    boxShadow: '0 2px 5px rgba(0, 0, 0, 1)'
   }
 
   const name = {
-    placeholderTextColor: '#ffffff',
     backgroundColor: '#2A2B30',
     color: '#ffffff',
     fontFamily: 'LeagueSpartan-SemiBold',
     fontSize: screenAverage*0.025,
-    borderBottomRadius: 1,
+    borderRadius: 1,
     borderBottomWidth: 2,
-    borderBottomColor: '#ffffff',
-    borderRightWidth: 0,
-    borderLeftWidth: 0,
     textAlign: 'left',
     position: 'absolute',
     marginTop: screenHeight*0.37,
     marginLeft: screenWidth*0.05,
     alignSelf: 'center',
     padding: 5,
-    borderTopWidth: 0,
     width: screenWidth*0.45,
     borderColor: '#F3831E',
   }
@@ -131,23 +123,18 @@ const setdocs = async () =>{
     position: 'absolute'
   }
   const dates = {
-    placeholderTextColor: '#ffffff',
     backgroundColor: '#2A2B30',
     color: '#ffffff',
     fontFamily: 'LeagueSpartan-SemiBold',
     fontSize: screenAverage*0.025,
-    borderBottomRadius: 1,
+    borderRadius: 1,
     borderBottomWidth: 2,
-    borderBottomColor: '#ffffff',
-    borderRightWidth: 0,
-    borderLeftWidth: 0,
     textAlign: 'left',
     position: 'absolute',
     marginTop: screenHeight*0.42,
     marginLeft: screenWidth*0.05,
     alignSelf: 'center',
     padding: 5,
-    borderTopWidth: 0,
     width: screenWidth*0.45,
     borderColor: '#F3831E',
     mode:'date',
@@ -163,23 +150,18 @@ const setdocs = async () =>{
   }
 
   const heights = {
-    placeholderTextColor: '#ffffff',
     backgroundColor: '#2A2B30',
     color: '#ffffff',
     fontFamily: 'LeagueSpartan-SemiBold',
     fontSize: screenAverage*0.025,
-    borderBottomRadius: 1,
+    borderRadius: 1,
     borderBottomWidth: 2,
-    borderBottomColor: '#ffffff',
-    borderRightWidth: 0,
-    borderLeftWidth: 0,
     textAlign: 'left',
     position: 'absolute',
     marginTop: screenHeight*0.47,
     marginLeft: screenWidth*0.05,
     alignSelf: 'center',
     padding: 5,
-    borderTopWidth: 0,
     width: screenWidth*0.45,
     borderColor: '#F3831E',
   }
@@ -193,25 +175,27 @@ const setdocs = async () =>{
   }
 
   const weights = {
-    placeholderTextColor: '#ffffff',
     backgroundColor: '#2A2B30',
     color: '#ffffff',
     fontFamily: 'LeagueSpartan-SemiBold',
     fontSize: screenAverage*0.025,
-    borderBottomRadius: 1,
+    borderRadius: 1,
     borderBottomWidth: 2,
-    borderBottomColor: '#ffffff',
-    borderRightWidth: 0,
-    borderLeftWidth: 0,
     textAlign: 'left',
     position: 'absolute',
     marginTop: screenHeight*0.52,
     marginLeft: screenWidth*0.05,
     alignSelf: 'center',
     padding: 5,
-    borderTopWidth: 0,
     width: screenWidth*0.45,
     borderColor: '#F3831E',
+  }
+
+  const nextbuttontext = {
+    fontFamily: 'LeagueSpartan-SemiBold',
+    fontSize: screenAverage*0.05,
+    alignSelf: 'center',
+    textAlign: 'center',
   }
 
   const weightpic = {
@@ -232,6 +216,10 @@ const setdocs = async () =>{
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
   }, []);
 
+  if (!isLoaded) {
+    return(<Loading/>);
+  }
+
   return (
     <View style={background}>
 
@@ -251,9 +239,9 @@ const setdocs = async () =>{
 
       <TextInput type={'weight'} placeholder={'Weight kg'} style={weights} defaultValue={weight} onChangeText={(text) => setWeight(text)}/>  
 
-      <TouchableOpacity onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={nextbutton}>Save</TouchableOpacity>
+      <TouchableOpacity onPress={handleTouchStart} style={nextbutton}><Text style={nextbuttontext}>Save</Text></TouchableOpacity>
 
-      <Image onClick = {clicked} source={require('../assets/back.png')} style={backbutton}/>
+      <TouchableOpacity onPress={clicked}><Image source={require('../assets/back.png')} style={backbutton}/></TouchableOpacity>
 
     </View>
   ); 

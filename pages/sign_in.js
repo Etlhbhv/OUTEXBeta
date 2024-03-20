@@ -7,6 +7,7 @@ import { useEffect, useState} from 'react';
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { initializeApp } from 'firebase/app';
 import firebaseConfig from '../firebaseConfig';
+import Loading from './Loading';
 
 initializeApp(firebaseConfig);
 
@@ -17,13 +18,10 @@ function SignIn() {
   const screenHeight = Dimensions.get('window').height;
   const screenWidth = Dimensions.get('window').width
   const screenAverage = (screenWidth+(2*screenHeight))/3;
-  const [active, setActive] = React.useState(false);
   const [isLoaded] = useFonts({
     'LeagueSpartan-SemiBold': require('../assets/fonts/LeagueSpartan-SemiBold.ttf'),
     'LeagueSpartan-Regular': require('../assets/fonts/LeagueSpartan-Regular.ttf')
     });
-
-  const handleTouchEnd = () => setActive(false);
   
 
   const textsignin = {
@@ -46,47 +44,39 @@ function SignIn() {
   };
 
   const email = {
-    placeholderTextColor: '#ffffff',
     backgroundColor: '#2A2B30',
     color: '#ffffff',
     fontFamily: 'LeagueSpartan-SemiBold',
     fontSize: screenAverage*0.025,
-    borderBottomRadius: 1,
+    borderRadius: 1,
     borderBottomWidth: 2,
-    borderBottomColor: '#ffffff',
-    borderRightWidth: 0,
-    borderLeftWidth: 0,
+    borderColor: '#ffffff',
     textAlign: 'left',
     position: 'absolute',
     marginTop: screenHeight*0.33,
     alignSelf: 'center',
     padding: 5,
-    borderTopWidth: 0,
     width: screenWidth*0.5
   }
 
   const password = {
-    placeholderTextColor: '#ffffff',
     backgroundColor: '#2A2B30',
     color: '#ffffff',
     fontFamily: 'LeagueSpartan-SemiBold',
     fontSize: screenAverage*0.025,
-    borderBottomRadius: 1,
+    borderRadius: 1,
     borderBottomWidth: 2,
     borderBottomColor: '#ffffff',
-    borderRightWidth: 0,
-    borderLeftWidth: 0,
     textAlign: 'left',
     position: 'absolute',
     marginTop: screenHeight*0.39,
     alignSelf: 'center',
     padding: 5,
-    borderTopWidth: 0,
     width: screenWidth*0.5
   }
 
   const signinbutton = {
-    backgroundColor: active ? '#C46B1B' : '#F3831E',
+    backgroundColor: '#F3831E',
     fontFamily: 'LeagueSpartan-SemiBold',
     fontSize: screenAverage*0.05,
     alignSelf: 'center',
@@ -135,6 +125,14 @@ function SignIn() {
     position: 'absolute',
   }
 
+  const nextbuttontext = {
+    backgroundColor: '#F3831E',
+    fontFamily: 'LeagueSpartan-SemiBold',
+    fontSize: screenAverage*0.05,
+    alignSelf: 'center',
+    textAlign: 'center',
+  }
+
   const forgotbutton = {
     backgroundColor: '#2A2B30',
     color: '#F3831E',
@@ -158,7 +156,6 @@ function SignIn() {
   const [pass, setPassword] = useState('');
 
   const handleSignIn = async () => {
-    setActive(true);
     console.log('Clicked sign in button');
     try {
       await signInWithEmailAndPassword(auth ,em, pass);
@@ -198,6 +195,11 @@ function SignIn() {
     if (user) {
       navigation.navigate("Profile");}})
   
+      if (!isLoaded) {
+        return(<Loading/>);
+      }
+    
+
   return (
     <View style={background}>
 
@@ -207,9 +209,9 @@ function SignIn() {
 
       <TextInput type={'password'} placeholder='Password' style={password} onChangeText={(text) => setPassword(text)} value={pass}/>
 
-      <TouchableOpacity onTouchStart={handleSignIn} onTouchEnd={handleTouchEnd} style={signinbutton}>Log In</TouchableOpacity>
+      <TouchableOpacity onPress={handleSignIn} style={signinbutton}><Text style={nextbuttontext}>Log In</Text></TouchableOpacity>
 
-      <Text style ={forgotbutton} onClick = {clickedForgot}>Forgot your password?</Text>
+      <Text style ={forgotbutton} onPress = {clickedForgot}>Forgot your password?</Text>
 
       <View style={bottom}>
 
@@ -221,7 +223,7 @@ function SignIn() {
 
       </View>
 
-        <Text style ={signupbutton} onClick = {clicked}>Sign Up</Text>
+        <Text style ={signupbutton} onPress = {clicked}>Sign Up</Text>
 
     </View>
   );

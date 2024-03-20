@@ -8,6 +8,7 @@ import { getAuth} from "firebase/auth";
 import { initializeApp } from 'firebase/app';
 import firebaseConfig from '../firebaseConfig';
 import {getFirestore, getDoc, doc} from 'firebase/firestore'
+import Loading from './Loading';
 
 initializeApp(firebaseConfig);
 
@@ -36,17 +37,14 @@ const [username, setName] = useState('');
   const screenHeight = Dimensions.get('window').height;
   const screenWidth = Dimensions.get('window').width
   const screenAverage = (screenWidth+(2*screenHeight))/3;
-  const [active, setActive] = React.useState(false);
   const [isLoaded] = useFonts({
     'LeagueSpartan-SemiBold': require('../assets/fonts/LeagueSpartan-SemiBold.ttf')
     });
 
   const handleTouchStart = () => {
-    setActive(true);
     console.log('Clicked edit');
     navigation.navigate("ProfileE");
   }
-  const handleTouchEnd = () => setActive(false);
   
 
   const textrp = {
@@ -69,7 +67,7 @@ const [username, setName] = useState('');
   };
 
   const nextbutton = {
-    backgroundColor: active ? '#C46B1B' : '#F3831E',
+    backgroundColor: '#F3831E',
     fontFamily: 'LeagueSpartan-SemiBold',
     fontSize: screenAverage*0.03,
     alignSelf: 'center',
@@ -84,13 +82,19 @@ const [username, setName] = useState('');
     boxShadow: '0 2px 5px rgba(0, 0, 0, 1)'
   }
 
+  const nextbuttontext = {
+    fontFamily: 'LeagueSpartan-SemiBold',
+    fontSize: screenAverage*0.03,
+    alignSelf: 'center',
+    textAlign: 'center'
+  }
+
   const backbutton = {
     width: screenWidth*0.16,
     height: screenWidth*0.16,
     marginTop: screenWidth*0.05,
     marginLeft: screenWidth*0.05,
     position: 'absolute',
-    boxShadow: '0 2px 5px rgba(0, 0, 0, 1)'
   }
   const lines = { 
     height: 2,
@@ -111,14 +115,18 @@ const [username, setName] = useState('');
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
   }, []);
 
+  if (!isLoaded) {
+    return(<Loading/>);
+  }
+
   return (
     <View style={background}>
 
       <Text style={textrp}>{username}</Text>
 
-      <TouchableOpacity onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={nextbutton}>Edit profile</TouchableOpacity>
+      <TouchableOpacity onPress={handleTouchStart} style={nextbutton}><Text style={nextbuttontext}>Edit profile</Text></TouchableOpacity>
 
-      <Image onClick = {clicked} source={require('../assets/back.png')} style={backbutton}/>
+      <TouchableOpacity onPress={clicked}><Image source={require('../assets/back.png')} style={backbutton}/></TouchableOpacity>
 
       <View style={lines} />
 

@@ -7,6 +7,7 @@ import { useEffect, useState} from 'react';
 import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import { initializeApp } from 'firebase/app';
 import firebaseConfig from '../../firebaseConfig';
+import Loading from '../Loading';
 
 initializeApp(firebaseConfig);
 
@@ -26,15 +27,18 @@ function EmailPR() {
   const [em, setEmail] = useState('');
 
   const handleTouchStart = async () => {
-    setActive(true);
+    let flag = true;
     try{
     await sendPasswordResetEmail(auth,em)
   } catch (error) {
+    flag = false;
     console.error('Error reseting:', error);
   }
-    navigation.navigate("SignIn");
+  if (flag){
+    navigation.navigate('SignIn');
   }
-  const handleTouchEnd = () => setActive(false);
+    
+  }
   
 
   const textrp = {
@@ -57,27 +61,23 @@ function EmailPR() {
   };
 
   const email = {
-    placeholderTextColor: '#ffffff',
     backgroundColor: '#2A2B30',
     color: '#ffffff',
     fontFamily: 'LeagueSpartan-SemiBold',
     fontSize: screenAverage*0.025,
-    borderBottomRadius: 1,
+    borderRadius: 1,
     borderBottomWidth: 2,
-    borderBottomColor: '#ffffff',
-    borderRightWidth: 0,
-    borderLeftWidth: 0,
+    borderColor: '#ffffff',
     textAlign: 'left',
     position: 'absolute',
     marginTop: screenHeight*0.35,
     alignSelf: 'center',
     padding: 5,
-    borderTopWidth: 0,
     width: screenWidth*0.5
   }
 
   const nextbutton = {
-    backgroundColor: active ? '#C46B1B' : '#F3831E',
+    backgroundColor:'#F3831E',
     fontFamily: 'LeagueSpartan-SemiBold',
     fontSize: screenAverage*0.05,
     alignSelf: 'center',
@@ -92,13 +92,20 @@ function EmailPR() {
     boxShadow: '0 2px 5px rgba(0, 0, 0, 1)'
   }
 
+  const nextbuttontext = {
+    backgroundColor: '#F3831E',
+    fontFamily: 'LeagueSpartan-SemiBold',
+    fontSize: screenAverage*0.05,
+    alignSelf: 'center',
+    textAlign: 'center',
+  }
+
   const backbutton = {
     width: screenWidth*0.16,
     height: screenWidth*0.16,
     marginTop: screenWidth*0.05,
     marginLeft: screenWidth*0.05,
-    position: 'absolute',
-    boxShadow: '0 2px 5px rgba(0, 0, 0, 1)'
+    position: 'absolute'
   }
   
   const info = {
@@ -131,6 +138,10 @@ function EmailPR() {
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
   }, []);
 
+  if (!isLoaded) {
+    return(<Loading/>);
+  }
+
   return (
     <View style={background}>
 
@@ -140,9 +151,9 @@ function EmailPR() {
 
       <Text style={info}>You will recieve an email. With instructions to reset your password.</Text>
 
-      <TouchableOpacity onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={nextbutton}>Reset</TouchableOpacity>
+      <TouchableOpacity onPress={handleTouchStart} style={nextbutton}><Text style={nextbuttontext}>Reset</Text></TouchableOpacity>
 
-      <Image onClick = {clicked} source={require('../../assets/back.png')} style={backbutton}/>
+      <TouchableOpacity onPress = {clicked}><Image source={require('../../assets/back.png')} style={backbutton}/></TouchableOpacity>
 
     </View>
   ); 

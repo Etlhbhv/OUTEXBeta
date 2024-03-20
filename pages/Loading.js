@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect} from 'react';
 import { View, Dimensions, Image} from 'react-native';
 import * as ScreenOrientation from 'expo-screen-orientation'
-import { useEffect} from 'react';
 
 const Loading = () => {
     const screenWidth = Dimensions.get('window').width
