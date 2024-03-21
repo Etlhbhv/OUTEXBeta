@@ -1,42 +1,47 @@
 import React from 'react';
-import { View,Dimensions, Image, Text, TouchableOpacity} from 'react-native';
-import { Video } from 'expo-av';
+import { View,Dimensions, Image, Text, TouchableOpacity, ScrollView,ActivityIndicator} from 'react-native';
+import { Video,ResizeMode } from 'expo-av';
 import { useFonts } from '@use-expo/font';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation , useRoute} from '@react-navigation/native';
 import * as ScreenOrientation from 'expo-screen-orientation'
 import { useEffect, useState} from 'react';
+import { initializeApp } from 'firebase/app';
+import firebaseConfig from '../firebaseConfig';
+import {getFirestore, getDoc, doc} from 'firebase/firestore'
+import Loading from './Loading';
 
+initializeApp(firebaseConfig);
+
+const base = getFirestore();
 function Exercise() {
-  const [videoSource, setVideoSource] = useState(null);
+  const [isReady, setIsReady] = useState(false);
+
+  const onLoadStart = () => {
+    setIsReady(false);
+  };
+
+  const onLoad = () => {
+    setIsReady(true);
+  };
+  const route = useRoute();
+  const { exercises,index} = route.params;
   const exname = 'Plank';
   const quants = 'Time: 60s'
-  const description = 'Place your ellbows on the ground keep your back and legs straight. Make sure that your hands make a 90 degreee angle.'
+  const url = 'https://drive.google.com/file/d/1ELQ6rxUEpBXYcjFGOgF5AoWNMboVo-sg/view?usp=sharing'
+  const describtion = 'Place your ellbows on the ground keep your back and legs straight. Make sure that your hands make a 90 degreee angle.'
   const navigation = useNavigation();
   const screenHeight = Dimensions.get('window').height;
   const screenWidth = Dimensions.get('window').width
   const screenAverage = (screenWidth+(2*screenHeight))/3;
-  const [active, setActive] = React.useState(false);
   const [isLoaded] = useFonts({
     'LeagueSpartan-SemiBold': require('../assets/fonts/LeagueSpartan-SemiBold.ttf'),
     'LeagueSpartan-Regular': require('../assets/fonts/LeagueSpartan-Regular.ttf')
     });
 
   const handleTouchStart = () => {
-    setActive(true);
     console.log("Clicked Next");
   }
-  const handleTouchEnd = () => setActive(false);
   
-
-  const textrp = {
-    color: '#ffffff',
-  fontFamily: 'LeagueSpartan-SemiBold',
-  fontSize: screenAverage*0.03,
-  textAlign: 'center',
-  position: 'absolute',
-  marginTop: screenHeight*0.04,
-  width: '100%'
-  };
 
   const background = {
     backgroundColor: '#2A2B30',
@@ -48,7 +53,7 @@ function Exercise() {
   };
 
   const nextbutton = {
-    backgroundColor: active ? '#C46B1B' : '#F3831E',
+    backgroundColor: '#F3831E',
     fontFamily: 'LeagueSpartan-SemiBold',
     fontSize: screenAverage*0.05,
     alignSelf: 'center',
@@ -66,31 +71,48 @@ function Exercise() {
   const backbutton = {
     width: screenWidth*0.16,
     height: screenWidth*0.16,
-    marginTop: screenWidth*0.05,
-    marginLeft: screenWidth*0.05,
-    position: 'absolute',
-    boxShadow: '0 2px 5px rgba(0, 0, 0, 1)'
   }
 
-  const video = {
-    flex: 1,
-    alignSelf: 'stretch'
+  const tname = {
+    fontFamily: 'LeagueSpartan-SemiBold',
+    color: '#FFFFFF',
+    fontSize: screenAverage*0.035,
+    textAlign:'center',
+    width: screenWidth*0.5
+  }
+
+  const row = {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    marginTop: 0.05*screenHeight,
+    marginLeft:  0.03*screenWidth
   }
 
   const line = { 
     height: 2,
     borderRadius: 1, 
     backgroundColor: '#F3831E',
-    width: screenWidth*0.45,
-    marginLeft: screenWidth*0.275,
-    marginTop: screenHeight*0.07
+    width: screenWidth*0.5,
+    marginTop: 7
+  }
+
+  const namecol = {
+    flexDirection: 'column',
+  alignItems: 'center',
+  width: '64%'
+}
+
+  const video = {
+    width: '90%', 
+    height: '35%', 
+    alignSelf: 'center'
   }
 
   const bottom = {
     flexDirection: 'row', 
     justifyContent: 'center', 
     alignItems: 'center',
-    marginTop: screenHeight*0.4,
     padding: 15
   }
 
@@ -115,44 +137,61 @@ function Exercise() {
   fontFamily: 'LeagueSpartan-SemiBold',
   fontSize: screenAverage*0.037,
   textAlign: 'center',
-  position: 'absolute',
-  width: '40%',
+  width: '50%',
   padding: 15,
   borderRadius: 10,
-  marginLeft: screenWidth*0.3,
-  marginTop: screenHeight*0.4,
+  marginTop: 0.03*screenHeight
   };
 
-  const descript = {
+  const setsstyle = {
+    color: '#ffffff',
+    backgroundColor: '#F3831E',
+  fontFamily: 'LeagueSpartan-SemiBold',
+  fontSize: screenAverage*0.037,
+  textAlign: 'center',
+  width: '50%',
+  padding: 15,
+  borderRadius: 10,
+  };
+
+  const describt = {
     color: '#ffffff',
   fontFamily: 'LeagueSpartan-Regular',
   fontSize: screenAverage*0.026,
   textAlign: 'left',
-  position: 'absolute',
   width: '80%',
   marginLeft: screenWidth*0.1,
-  marginTop: screenHeight*0.52,
   };
 
   const clicked = () => {
     console.log("Clicked back");
+    navigation.goBack();
   }
 
   useEffect(() => {
-    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
-    setVideoSource(require('../assets/video.mp4'));
+    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT)
   }, []);
+
+  if (!isLoaded || !isReady) {
+    return (<Loading />);
+  }
 
   return (
     <View style={background}>
+            <ScrollView contentContainerStyle={{flexGrow: 1,alignItems: 'center'}}>
       
-      <Video source={videoSource} style={video} isLooping={true} shouldPlay={true}/>
+            <View style={row}>
+            <TouchableOpacity onPress={clicked}><Image source={require('../assets/back.png')} style={backbutton}/></TouchableOpacity>
+            <View style={namecol}>
+            <Text style={tname}>baba</Text>
+            <View style={line} />
+            </View>
+            </View>
+      <Video source={require('../assets/video.mp4')} style={video} isLooping shouldPlay={true} resizeMode={ResizeMode.CONTAIN}  onLoad={onLoad} onLoadStart={onLoadStart}/>
 
-      <Text style={textrp}>{exname}</Text>
+      <Text style={setsstyle}>Sets</Text>
 
       <Text style={quantity}>{quants}</Text>
-
-      <View style={line} />
 
       <View style={bottom}>
 
@@ -164,13 +203,12 @@ function Exercise() {
 
       </View>
 
-      <TouchableOpacity onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={nextbutton}>Next</TouchableOpacity>
+      <TouchableOpacity onTouchStart={handleTouchStart} style={nextbutton}><Text>Start</Text></TouchableOpacity>
 
-      <Image onClick = {clicked} source={require('../assets/back.png')} style={backbutton}/>
+      <Text style={describt}>{describtion}</Text>
 
-      <Text style={descript}>{description}</Text>
-
-    </View>
+      </ScrollView>
+        </View>
   ); 
 
 //Add later <Text style={warning}>Email is invalid, or isn't registered.</Text>
