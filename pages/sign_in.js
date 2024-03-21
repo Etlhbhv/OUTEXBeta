@@ -193,7 +193,7 @@ function SignIn() {
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      navigation.navigate("Profile");}})
+      navigation.navigate("MainP");}})
   
       if (!isLoaded) {
         return(<Loading/>);

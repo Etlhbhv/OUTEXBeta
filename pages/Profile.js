@@ -4,7 +4,7 @@ import { useFonts } from '@use-expo/font';
 import { useNavigation} from '@react-navigation/native';
 import * as ScreenOrientation from 'expo-screen-orientation'
 import { useEffect, useState} from 'react';
-import { getAuth} from "firebase/auth";
+import { getAuth, signOut} from "firebase/auth";
 import { initializeApp } from 'firebase/app';
 import firebaseConfig from '../firebaseConfig';
 import {getFirestore, getDoc, doc} from 'firebase/firestore'
@@ -53,7 +53,17 @@ const [username, setName] = useState('');
   fontSize: screenAverage*0.035,
   textAlign: 'center',  
   position: 'absolute',
-  marginTop: screenHeight*0.4,
+  marginTop: screenHeight*0.38,
+  width: '100%'
+  };
+
+  const signoutbutton = {
+    color: '#F3831E',
+  fontFamily: 'LeagueSpartan-SemiBold',
+  fontSize: screenAverage*0.03,
+  textAlign: 'center',  
+  position: 'absolute',
+  marginTop: screenHeight*0.9,
   width: '100%'
   };
 
@@ -94,7 +104,7 @@ const [username, setName] = useState('');
     height: screenWidth*0.16,
     marginTop: screenWidth*0.05,
     marginLeft: screenWidth*0.05,
-    position: 'absolute',
+    position: 'absolute'
   }
   const lines = { 
     height: 2,
@@ -108,6 +118,15 @@ const [username, setName] = useState('');
 
   const clicked = () => {
     console.log('Clicked back');
+    navigation.navigate('MainP')
+  }
+
+  const signout = () => {
+    console.log('Clicked back');
+    signOut(auth).then(() => {
+      navigation.navigate('SignIn')
+    }).catch((error) => {
+    });
   }
 
   useEffect(() => {
@@ -129,6 +148,8 @@ const [username, setName] = useState('');
       <TouchableOpacity onPress={clicked}><Image source={require('../assets/back.png')} style={backbutton}/></TouchableOpacity>
 
       <View style={lines} />
+
+      <Text style ={signoutbutton} onPress = {signout}>Sign Out</Text>
 
     </View>
   ); 

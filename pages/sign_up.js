@@ -24,7 +24,7 @@ function SignUp() {
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      navigation.navigate("Profile");}})
+      navigation.navigate("MainP");}})
   
   const textsignup = {
     color: '#ffffff',

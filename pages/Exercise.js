@@ -172,7 +172,7 @@ function Exercise() {
 
     </View>
   ); 
-s
+
 //Add later <Text style={warning}>Email is invalid, or isn't registered.</Text>
 
 }

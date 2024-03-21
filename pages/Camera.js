@@ -1,6 +1,6 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
-import { View,Dimensions, Image,TouchableOpacity} from 'react-native';
+import { View,Dimensions, Image,TouchableOpacity, Text} from 'react-native';
 import { useFonts } from '@use-expo/font';
 import { useNavigation } from '@react-navigation/native';
 import Svg, { Rect } from 'react-native-svg';
@@ -67,6 +67,7 @@ function Camera() {
 
   const clicked = () => {
     console.log('Clicked back');
+    navigation.goBack();
   }
 
   const pause = '../assets/Pause.png';
@@ -105,11 +106,11 @@ function Camera() {
   return (
     <View style={background}>
 
-      <TouchableOpacity onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={nextbutton}>Skip</TouchableOpacity>
+      <TouchableOpacity onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={nextbutton}><Text>Skip</Text></TouchableOpacity>
 
-      <Image onClick = {clicked} source={require('../assets/back.png')} style={backbutton}/>
+      <Image onPress = {clicked} source={require('../assets/back.png')} style={backbutton}/>
 
-      <Image onClick = {clickedPause} source={path} style={pausebutton}/>
+      <Image onPress = {clickedPause} source={path} style={pausebutton}/>
 
       <Svg width="100%" height="100%">
       <Rect
