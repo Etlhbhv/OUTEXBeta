@@ -1,6 +1,6 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
-import { View,Dimensions, Image,TouchableOpacity, Text, ProgressBar} from 'react-native';
+import { View,Dimensions, Image,TouchableOpacity, Text} from 'react-native';
 import { useFonts } from '@use-expo/font';
 import { useNavigation,useRoute, useFocusEffect } from '@react-navigation/native';
 import Svg, { Rect } from 'react-native-svg';
@@ -112,7 +112,6 @@ function Camera() {
       <TouchableOpacity onPress={clicked}><Image source={require('../assets/back.png')} style={backbutton}/></TouchableOpacity>
 
 <TouchableOpacity onPress = {clickedPause}><Image source={path} style={pausebutton}/></TouchableOpacity>
-<ProgressBar progress={0.5} width={200} />
 
     </View>
   ); 
