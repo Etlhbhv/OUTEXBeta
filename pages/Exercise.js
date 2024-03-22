@@ -2,7 +2,7 @@ import React from 'react';
 import { View,Dimensions, Image, Text, TouchableOpacity, ScrollView,ActivityIndicator} from 'react-native';
 import { Video,ResizeMode } from 'expo-av';
 import { useFonts } from '@use-expo/font';
-import { useNavigation , useRoute} from '@react-navigation/native';
+import { useNavigation , useRoute, useFocusEffect} from '@react-navigation/native';
 import * as ScreenOrientation from 'expo-screen-orientation'
 import { useEffect, useState} from 'react';
 import { initializeApp } from 'firebase/app';
@@ -14,7 +14,8 @@ initializeApp(firebaseConfig);
 
 const base = getFirestore();
 function Exercise() {
-  const [isReady, setIsReady] = useState(false);
+
+  const [isReady, setIsReady] = useState(true); //change to false
 
   const onLoadStart = () => {
     setIsReady(false);
@@ -24,12 +25,9 @@ function Exercise() {
     setIsReady(true);
   };
   const route = useRoute();
-  const { exercises,index} = route.params;
-  const exname = 'Plank';
-  const quants = 'Time: 60s'
+  const { exercises,index,set} = route.params;
   const url = 'https://drive.google.com/file/d/1ELQ6rxUEpBXYcjFGOgF5AoWNMboVo-sg/view?usp=sharing'
-  const describtion = 'Place your ellbows on the ground keep your back and legs straight. Make sure that your hands make a 90 degreee angle.'
-  const navigation = useNavigation();
+    const navigation = useNavigation();
   const screenHeight = Dimensions.get('window').height;
   const screenWidth = Dimensions.get('window').width
   const screenAverage = (screenWidth+(2*screenHeight))/3;
@@ -40,6 +38,33 @@ function Exercise() {
 
   const handleTouchStart = () => {
     console.log("Clicked Next");
+    navigation.navigate('Camera',{exercises: exercises, index: index, set: set});
+  }
+
+  const [describtion, setDescription] = useState('');
+  const [exname, setName] = useState('');
+  const [qtext,setqtext] = useState('');
+  const [sets, setSets] = useState('');
+
+  const getdocs = async () =>{
+    try{
+    const docRef = doc(base, "Exercises",exercises[index.toString()].id);
+  const docSnap = await getDoc(docRef);
+  if (docSnap.exists()) {
+    setName(docSnap.data().name);
+    setDescription(docSnap.data().description);
+  } else {
+    console.log("No such document!");}}
+    catch (error) {
+      console.error('Error getting doc:', error);}
+      
+    setSets(Object.keys(exercises[index.toString()].quant).length)
+    if (exercises[index.toString()].time){
+      setqtext('Time: '+ exercises[index.toString()].quant[set.toString()] + 's');
+  }
+    else{
+      setqtext('Reps: '+ exercises[index.toString()].quant[set.toString()]);
+    }
   }
   
 
@@ -49,23 +74,27 @@ function Exercise() {
     height: '100%',
     width: '100%',
     left: 0,
-    top: 0
+    top: 0,
+    flex: 1
   };
 
   const nextbutton = {
     backgroundColor: '#F3831E',
-    fontFamily: 'LeagueSpartan-SemiBold',
-    fontSize: screenAverage*0.05,
     alignSelf: 'center',
     textAlign: 'center',
-    borderRadius: 5,
-    borderColor: 'black',
-    borderWidth: 1,
+    borderRadius: 10,
     width: screenWidth*0.52,
-    marginTop: screenHeight*0.9,
-    position: 'absolute',
-    padding: 7,
-    boxShadow: '0 2px 5px rgba(0, 0, 0, 1)'
+    marginTop: 0.05*screenHeight,
+    padding: 9,
+    boxShadow: '0 2px 5px rgba(0, 0, 0, 1)',
+    marginBottom: 0.1*screenHeight
+  }
+
+  const nbts = {
+    fontFamily: 'LeagueSpartan-SemiBold',
+    fontSize: screenAverage*0.035,
+    textAlign:'center',
+    width: screenWidth*0.5
   }
 
   const backbutton = {
@@ -105,7 +134,7 @@ function Exercise() {
 
   const video = {
     width: '90%', 
-    height: '35%', 
+    height: 0.35*screenHeight, 
     alignSelf: 'center'
   }
 
@@ -159,8 +188,7 @@ function Exercise() {
   fontFamily: 'LeagueSpartan-Regular',
   fontSize: screenAverage*0.026,
   textAlign: 'left',
-  width: '80%',
-  marginLeft: screenWidth*0.1,
+  width: '80%'
   };
 
   const clicked = () => {
@@ -168,9 +196,12 @@ function Exercise() {
     navigation.goBack();
   }
 
-  useEffect(() => {
+  useFocusEffect(
+    React.useCallback(() => {
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT)
-  }, []);
+    getdocs();
+  }, [])
+  );
 
   if (!isLoaded || !isReady) {
     return (<Loading />);
@@ -183,15 +214,15 @@ function Exercise() {
             <View style={row}>
             <TouchableOpacity onPress={clicked}><Image source={require('../assets/back.png')} style={backbutton}/></TouchableOpacity>
             <View style={namecol}>
-            <Text style={tname}>baba</Text>
+            <Text style={tname}>{exname}</Text>
             <View style={line} />
             </View>
             </View>
-      <Video source={require('../assets/video.mp4')} style={video} isLooping shouldPlay={true} resizeMode={ResizeMode.CONTAIN}  onLoad={onLoad} onLoadStart={onLoadStart}/>
+      <Video source={{uri: url}} style={video} isLooping shouldPlay={true} resizeMode={ResizeMode.CONTAIN} />
 
-      <Text style={setsstyle}>Sets</Text>
+      <Text style={setsstyle}>{'Sets: ' + (set+1) + '/' + sets}</Text>
 
-      <Text style={quantity}>{quants}</Text>
+      <Text style={quantity}>{qtext}</Text>
 
       <View style={bottom}>
 
@@ -203,15 +234,16 @@ function Exercise() {
 
       </View>
 
-      <TouchableOpacity onTouchStart={handleTouchStart} style={nextbutton}><Text>Start</Text></TouchableOpacity>
-
       <Text style={describt}>{describtion}</Text>
+
+      <TouchableOpacity onPress={handleTouchStart} style={nextbutton}><Text style={nbts}>Next</Text></TouchableOpacity>
 
       </ScrollView>
         </View>
   ); 
 
 //Add later <Text style={warning}>Email is invalid, or isn't registered.</Text>
+//Add to video  onLoad={onLoad} onLoadStart={onLoadStart}
 
 }
 

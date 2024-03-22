@@ -29,6 +29,7 @@
     "react-dom": "18.2.0",
     "react-native": "0.73.5",
     "react-native-gesture-handler": "~2.14.0",
+    "react-native-progress": "^5.0.1",
     "react-native-svg": "14.1.0",
     "react-native-web": "~0.19.6",
     "react-navigation": "^5.0.0",

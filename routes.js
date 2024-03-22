@@ -7,6 +7,7 @@ import ProfileE from './pages/ProfileE';
 import MainP from './pages/MainP';
 import Training from './pages/Training';
 import Exercise from './pages/Exercise';
+import Camera from './pages/Camera';
 
 const Stack = createStackNavigator();
 
@@ -21,6 +22,7 @@ export default function Routes() {
       <Stack.Screen name="ProfileE" component={ProfileE} options={{ headerShown: false }} />
       <Stack.Screen name="Training" component={Training} options={{ headerShown: false }} />
       <Stack.Screen name="Exercise" component={Exercise} options={{ headerShown: false }} />
+      <Stack.Screen name="Camera" component={Camera} options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 }

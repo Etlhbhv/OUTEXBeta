@@ -1,26 +1,25 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
-import { View,Dimensions, Image,TouchableOpacity, Text} from 'react-native';
+import { View,Dimensions, Image,TouchableOpacity, Text, ProgressBar} from 'react-native';
 import { useFonts } from '@use-expo/font';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation,useRoute, useFocusEffect } from '@react-navigation/native';
 import Svg, { Rect } from 'react-native-svg';
 import * as ScreenOrientation from 'expo-screen-orientation'
 
 function Camera() {
+  const route = useRoute();
+  const { exercises,index,set} = route.params;
   const navigation = useNavigation();
-  const screenHeight = Dimensions.get('window').height;
-  const screenWidth = Dimensions.get('window').width
+  const [screenHeight, setHei] = useState(Dimensions.get('window').width);
+  const [screenWidth, setWid] = useState(Dimensions.get('window').height);
   const screenAverage = (screenHeight+(2*screenWidth))/3;
-  const [active, setActive] = React.useState(false);
   const [isLoaded] = useFonts({
     'LeagueSpartan-SemiBold': require('../assets/fonts/LeagueSpartan-SemiBold.ttf')
     });
 
   const handleTouchStart = () => {
-    setActive(true);
     console.log('Clicked Skip')
   }
-  const handleTouchEnd = () => setActive(false);
 
   const background = {
     backgroundColor: '#2A2B30',
@@ -32,13 +31,8 @@ function Camera() {
   };
 
   const nextbutton = {
-    backgroundColor: active ? '#C46B1B' : '#F3831E',
-    fontFamily: 'LeagueSpartan-SemiBold',
-    fontSize: screenAverage*0.05,
-    textAlign: 'center',
-    borderRadius: 5,
-    borderColor: 'black',
-    borderWidth: 1,
+    backgroundColor: '#F3831E',
+    borderRadius: 7,
     width: screenWidth*0.16,
     marginLeft: screenHeight*0.1,
     marginTop: screenHeight*0.82,
@@ -51,9 +45,8 @@ function Camera() {
     width: screenHeight*0.16,
     height: screenHeight*0.16,
     marginTop: screenHeight*0.05,
-    marginLeft: screenHeight*0.1,
-    position: 'absolute',
-    boxShadow: '0 2px 5px rgba(0, 0, 0, 1)'
+    marginLeft: screenHeight*0.05,
+    position: 'absolute'
   }
 
   const pausebutton = {
@@ -61,8 +54,13 @@ function Camera() {
     height: screenHeight*0.16,
     marginTop: screenHeight*0.82,
     marginLeft: screenWidth*0.88,
-    position: 'absolute',
-    boxShadow: '0 2px 5px rgba(0, 0, 0, 1)'
+    position: 'absolute'
+  }
+
+  const texts = {
+    fontFamily: 'LeagueSpartan-SemiBold',
+    fontSize: screenAverage*0.035,
+    textAlign:'center'
   }
 
   const clicked = () => {
@@ -90,9 +88,12 @@ function Camera() {
   const animate = true;
   const [rectHeight, setRectHeight] = useState(height);
 
-  useEffect(() => {
+  useFocusEffect(
+    React.useCallback(() => {
+    setHei(Dimensions.get('window').width);
+    setWid(Dimensions.get('window').height);
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
-    if (animate) {
+    /*if (animate) {
       const animation = window.requestAnimationFrame(() => {
         setRectHeight(rectHeight + 1);
       });
@@ -100,39 +101,18 @@ function Camera() {
       if (rectHeight >= screenWidth*0.8) {
         window.cancelAnimationFrame(animation);
       }
-    }
-  }, [animate, rectHeight, height]);
+    }*/
+  }, [animate, rectHeight, height]));
 
   return (
     <View style={background}>
 
-      <TouchableOpacity onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={nextbutton}><Text>Skip</Text></TouchableOpacity>
+      <TouchableOpacity onPress={handleTouchStart} style={nextbutton}><Text style={texts}>Skip</Text></TouchableOpacity>
 
-      <Image onPress = {clicked} source={require('../assets/back.png')} style={backbutton}/>
+      <TouchableOpacity onPress={clicked}><Image source={require('../assets/back.png')} style={backbutton}/></TouchableOpacity>
 
-      <Image onPress = {clickedPause} source={path} style={pausebutton}/>
-
-      <Svg width="100%" height="100%">
-      <Rect
-        y="6%"
-        x='15%'
-        height={screenHeight*0.11}
-        width={screenWidth*0.8}
-        fill={'white'}
-        rx={screenHeight*0.055}
-        ry={screenHeight*0.055}
-      />
-
-      <Rect
-        y='6%'
-        x= '15%'
-        height={screenHeight*0.11}
-        width={rectHeight}
-        fill={'#F3831E'}
-        rx={screenHeight*0.055}
-        ry={screenHeight*0.055}
-      />
-    </Svg>
+<TouchableOpacity onPress = {clickedPause}><Image source={path} style={pausebutton}/></TouchableOpacity>
+<ProgressBar progress={0.5} width={200} />
 
     </View>
   ); 

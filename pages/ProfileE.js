@@ -71,7 +71,7 @@ const setdocs = async () =>{
     height: '100%',
     width: '100%',
     left: 0,
-    top: 0
+    top: 0,
   };
 
   const nextbutton = {
@@ -136,9 +136,7 @@ const setdocs = async () =>{
     alignSelf: 'center',
     padding: 5,
     width: screenWidth*0.45,
-    borderColor: '#F3831E',
-    mode:'date',
-    format: "DD/MM/YYYY"
+    borderColor: '#F3831E'
   }
 
   const datepic = {
