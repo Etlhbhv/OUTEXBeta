@@ -1,5 +1,5 @@
 import React from 'react';
-import { View,Dimensions, Image, TextInput, TouchableOpacity, Text} from 'react-native';
+import { View,Dimensions, Image, TextInput, Text} from 'react-native';
 import { useFonts } from '@use-expo/font';
 import { useNavigation } from '@react-navigation/native';
 import * as ScreenOrientation from 'expo-screen-orientation'
@@ -9,6 +9,7 @@ import { initializeApp } from 'firebase/app';
 import firebaseConfig from '../firebaseConfig';
 import {getFirestore, getDoc, doc, setDoc} from 'firebase/firestore'
 import Loading from './Loading';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 initializeApp(firebaseConfig);
 
@@ -93,7 +94,7 @@ const setdocs = async () =>{
   const backbutton = {
     width: screenWidth*0.16,
     height: screenWidth*0.16,
-    marginTop: screenWidth*0.05,
+    marginTop: screenWidth*0.07,
     marginLeft: screenWidth*0.05,
     position: 'absolute',
   }

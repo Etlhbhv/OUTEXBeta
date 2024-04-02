@@ -1,5 +1,5 @@
 import React from 'react';
-import { View,Dimensions, Image, Text, TextInput, TouchableOpacity } from 'react-native';
+import { View,Dimensions, Image, Text, TextInput} from 'react-native';
 import { useFonts } from '@use-expo/font';
 import { useNavigation } from '@react-navigation/native';
 import * as ScreenOrientation from 'expo-screen-orientation'
@@ -8,6 +8,7 @@ import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import { initializeApp } from 'firebase/app';
 import firebaseConfig from '../../firebaseConfig';
 import Loading from '../Loading';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 initializeApp(firebaseConfig);
 

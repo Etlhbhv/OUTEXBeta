@@ -1,5 +1,5 @@
 import React from 'react';
-import { View,Dimensions, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { View,Dimensions, Text, Image, ScrollView } from 'react-native';
 import { useFonts } from '@use-expo/font';
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import * as ScreenOrientation from 'expo-screen-orientation'
@@ -8,6 +8,7 @@ import { initializeApp } from 'firebase/app';
 import firebaseConfig from '../firebaseConfig';
 import {getFirestore, getDoc, doc} from 'firebase/firestore'
 import Loading from './Loading';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 initializeApp(firebaseConfig);
 
@@ -185,7 +186,7 @@ function Training() {
 
   const startbutton = {
     height: 0.08*screenHeight,
-    width: '70%',
+    width: 0.7*screenWidth,
     borderRadius: 15,
     backgroundColor: '#F3831E',
     alignSelf: 'center',

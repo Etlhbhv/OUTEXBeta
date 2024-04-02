@@ -1,8 +1,9 @@
 import React from 'react';
-import { View,Dimensions, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { View,Dimensions, Text, Image, ScrollView } from 'react-native';
 import { useFonts } from '@use-expo/font';
 import { useNavigation } from '@react-navigation/native';
 import * as ScreenOrientation from 'expo-screen-orientation'
+import {TouchableOpacity} from 'react-native-gesture-handler';
 import { useEffect, useState} from 'react';
 import { getAuth} from "firebase/auth";
 import { initializeApp } from 'firebase/app';
@@ -76,7 +77,7 @@ function MainP() {
         backgroundColor: '#F3831E',
         height: 0.17*screenHeight,
         borderRadius: 30,
-        width: '90%',
+        width: 0.9*screenWidth,
         left: 0,
         top: 0,
         borderWidth: 15,

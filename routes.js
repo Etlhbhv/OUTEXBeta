@@ -7,7 +7,9 @@ import ProfileE from './pages/ProfileE';
 import MainP from './pages/MainP';
 import Training from './pages/Training';
 import Exercise from './pages/Exercise';
-import Camera from './pages/Camera';
+import Cameras from './pages/Camera';
+import SuccessN from './pages/SuccessN';
+import SuccessF from './pages/SuccessF';
 
 const Stack = createStackNavigator();
 
@@ -22,7 +24,9 @@ export default function Routes() {
       <Stack.Screen name="ProfileE" component={ProfileE} options={{ headerShown: false }} />
       <Stack.Screen name="Training" component={Training} options={{ headerShown: false }} />
       <Stack.Screen name="Exercise" component={Exercise} options={{ headerShown: false }} />
-      <Stack.Screen name="Camera" component={Camera} options={{ headerShown: false }} />
+      <Stack.Screen name="Cameras" component={Cameras} options={{ headerShown: false }} />
+      <Stack.Screen name="SuccessN" component={SuccessN} options={{ headerShown: false }} />
+      <Stack.Screen name="SuccessF" component={SuccessF} options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 }

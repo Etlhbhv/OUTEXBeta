@@ -1,35 +1,31 @@
 import React from 'react';
-import { View,Dimensions, Image, Text, TouchableOpacity, ScrollView,ActivityIndicator} from 'react-native';
+import { View,Dimensions, Image, Text,  ScrollView} from 'react-native';
 import { Video,ResizeMode } from 'expo-av';
 import { useFonts } from '@use-expo/font';
 import { useNavigation , useRoute, useFocusEffect} from '@react-navigation/native';
 import * as ScreenOrientation from 'expo-screen-orientation'
-import { useEffect, useState} from 'react';
+import { useRef, useState} from 'react';
 import { initializeApp } from 'firebase/app';
 import firebaseConfig from '../firebaseConfig';
 import {getFirestore, getDoc, doc} from 'firebase/firestore'
+import {getStorage, ref, getDownloadURL} from 'firebase/storage';
 import Loading from './Loading';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+
 
 initializeApp(firebaseConfig);
 
 const base = getFirestore();
+const storage = getStorage();
 function Exercise() {
 
-  const [isReady, setIsReady] = useState(true); //change to false
-
-  const onLoadStart = () => {
-    setIsReady(false);
-  };
-
-  const onLoad = () => {
-    setIsReady(true);
-  };
   const route = useRoute();
+  const vR = useRef(null); 
   const { exercises,index,set} = route.params;
-  const url = 'https://drive.google.com/file/d/1ELQ6rxUEpBXYcjFGOgF5AoWNMboVo-sg/view?usp=sharing'
-    const navigation = useNavigation();
-  const screenHeight = Dimensions.get('window').height;
-  const screenWidth = Dimensions.get('window').width
+  const [url, setUrl] = useState('');
+  const navigation = useNavigation();
+  const [screenHeight, setHei] = useState(Dimensions.get('window').height);
+  const [screenWidth, setWid] = useState(Dimensions.get('window').width);
   const screenAverage = (screenWidth+(2*screenHeight))/3;
   const [isLoaded] = useFonts({
     'LeagueSpartan-SemiBold': require('../assets/fonts/LeagueSpartan-SemiBold.ttf'),
@@ -38,7 +34,7 @@ function Exercise() {
 
   const handleTouchStart = () => {
     console.log("Clicked Next");
-    navigation.navigate('Camera',{exercises: exercises, index: index, set: set});
+    navigation.navigate('Cameras',{exercises: exercises, index: index, set: set});
   }
 
   const [describtion, setDescription] = useState('');
@@ -54,10 +50,13 @@ function Exercise() {
     setName(docSnap.data().name);
     setDescription(docSnap.data().description);
   } else {
-    console.log("No such document!");}}
-    catch (error) {
-      console.error('Error getting doc:', error);}
-      
+    console.log("No such document!");}
+    const videoRef = ref(storage, 'videos/'+exercises[index.toString()].id+'.mp4'); // Correct usage
+      const downloadUrl = await getDownloadURL(videoRef);
+      setUrl(downloadUrl);
+    } catch (error) {
+      console.error('Error getting doc:', error);
+    }
     setSets(Object.keys(exercises[index.toString()].quant).length)
     if (exercises[index.toString()].time){
       setqtext('Time: '+ exercises[index.toString()].quant[set.toString()] + 's');
@@ -66,7 +65,6 @@ function Exercise() {
       setqtext('Reps: '+ exercises[index.toString()].quant[set.toString()]);
     }
   }
-  
 
   const background = {
     backgroundColor: '#2A2B30',
@@ -193,17 +191,40 @@ function Exercise() {
 
   const clicked = () => {
     console.log("Clicked back");
-    navigation.goBack();
+    if (index == 0 && set == 0){
+      navigation.goBack();
+    }
+    else {
+      if(set == 0){
+      navigation.navigate('SuccessN',{exercises: exercises, index: index-1});
+    }
+    else{
+      navigation.navigate('Cameras',{exercises: exercises, index: index, set: set-1});
+    }
+    }
   }
 
   useFocusEffect(
     React.useCallback(() => {
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT)
     getdocs();
-  }, [])
+    if (vR.current) {
+      vR.current.playAsync();
+    }
+
+    const unsubscribeBlur = navigation.addListener('blur', () => {
+      if (vR.current) {
+        vR.current.stopAsync();
+      }
+    });
+
+    return () => {
+      unsubscribeBlur();
+    };
+  }, [navigation,set])
   );
 
-  if (!isLoaded || !isReady) {
+  if (!isLoaded) {
     return (<Loading />);
   }
 
@@ -218,7 +239,7 @@ function Exercise() {
             <View style={line} />
             </View>
             </View>
-      <Video source={{uri: url}} style={video} isLooping shouldPlay={true} resizeMode={ResizeMode.CONTAIN} />
+      <Video ref={vR} source={{uri: url}} style={video} isLooping shouldPlay={true} resizeMode={ResizeMode.CONTAIN}/>
 
       <Text style={setsstyle}>{'Sets: ' + (set+1) + '/' + sets}</Text>
 

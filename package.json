@@ -11,7 +11,7 @@
   "dependencies": {
     "@expo/metro-runtime": "~3.1.3",
     "@fontsource/league-spartan": "^5.0.19",
-    "@react-native-async-storage/async-storage": "^1.23.1",
+    "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-firebase/app": "^19.0.1",
     "@react-native-firebase/auth": "^19.0.1",
     "@react-navigation/native": "^6.1.14",
@@ -34,7 +34,8 @@
     "react-native-web": "~0.19.6",
     "react-navigation": "^5.0.0",
     "react-player": "^2.15.1",
-    "react-router-dom": "^6.22.2"
+    "react-router-dom": "^6.22.2",
+    "expo-camera": "~14.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

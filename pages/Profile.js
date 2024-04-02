@@ -1,5 +1,5 @@
 import React from 'react';
-import { View,Dimensions, Image, Text, TouchableOpacity } from 'react-native';
+import { View,Dimensions, Image, Text } from 'react-native';
 import { useFonts } from '@use-expo/font';
 import { useNavigation} from '@react-navigation/native';
 import * as ScreenOrientation from 'expo-screen-orientation'
@@ -9,6 +9,7 @@ import { initializeApp } from 'firebase/app';
 import firebaseConfig from '../firebaseConfig';
 import {getFirestore, getDoc, doc} from 'firebase/firestore'
 import Loading from './Loading';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 initializeApp(firebaseConfig);
 
@@ -102,7 +103,7 @@ const [username, setName] = useState('');
   const backbutton = {
     width: screenWidth*0.16,
     height: screenWidth*0.16,
-    marginTop: screenWidth*0.05,
+    marginTop: screenWidth*0.07,
     marginLeft: screenWidth*0.05,
     position: 'absolute'
   }
@@ -116,9 +117,9 @@ const [username, setName] = useState('');
   }
 
 
-  const clicked = () => {
+  const clicked = async () => {
     console.log('Clicked back');
-    navigation.navigate('MainP')
+    await navigation.goBack();
   }
 
   const signout = () => {

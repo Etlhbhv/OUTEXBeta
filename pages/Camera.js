@@ -1,12 +1,12 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
-import { View,Dimensions, Image,TouchableOpacity, Text} from 'react-native';
+import { View,Dimensions, Image,Text} from 'react-native';
 import { useFonts } from '@use-expo/font';
 import { useNavigation,useRoute, useFocusEffect } from '@react-navigation/native';
-import Svg, { Rect } from 'react-native-svg';
 import * as ScreenOrientation from 'expo-screen-orientation'
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
-function Camera() {
+function Cameras() {
   const route = useRoute();
   const { exercises,index,set} = route.params;
   const navigation = useNavigation();
@@ -18,7 +18,15 @@ function Camera() {
     });
 
   const handleTouchStart = () => {
-    console.log('Clicked Skip')
+    console.log('Clicked Skip');
+    if (Object.keys(exercises[index.toString()].quant).length == set+1 && Object.keys(exercises).length == index+1){
+      navigation.navigate('SuccessF',{exercises: exercises, index: index, set: set});
+    }
+    else if (Object.keys(exercises[index.toString()].quant).length == set+1) {
+      navigation.navigate('SuccessN',{exercises: exercises, index: index, set: set});
+    } else {
+      navigation.navigate('Exercise',{exercises: exercises, index: index, set: set+1});
+    }
   }
 
   const background = {
@@ -65,7 +73,7 @@ function Camera() {
 
   const clicked = () => {
     console.log('Clicked back');
-    navigation.goBack();
+    navigation.navigate('Exercise',{exercises: exercises, index: index, set: set});
   }
 
   const pause = '../assets/Pause.png';
@@ -84,29 +92,15 @@ function Camera() {
     setCurrent(!current);
   }
 
-  const height = 0;
-  const animate = true;
-  const [rectHeight, setRectHeight] = useState(height);
-
   useFocusEffect(
     React.useCallback(() => {
     setHei(Dimensions.get('window').width);
     setWid(Dimensions.get('window').height);
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
-    /*if (animate) {
-      const animation = window.requestAnimationFrame(() => {
-        setRectHeight(rectHeight + 1);
-      });
-
-      if (rectHeight >= screenWidth*0.8) {
-        window.cancelAnimationFrame(animation);
-      }
-    }*/
-  }, [animate, rectHeight, height]));
+  }, []));
 
   return (
     <View style={background}>
-
       <TouchableOpacity onPress={handleTouchStart} style={nextbutton}><Text style={texts}>Skip</Text></TouchableOpacity>
 
       <TouchableOpacity onPress={clicked}><Image source={require('../assets/back.png')} style={backbutton}/></TouchableOpacity>
@@ -116,8 +110,6 @@ function Camera() {
     </View>
   ); 
 
-//Add later <Text style={warning}>Email is invalid, or isn't registered.</Text>
-
 }
 
-export default Camera;
+export default Cameras;
