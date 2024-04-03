@@ -4,11 +4,13 @@ import { View,Dimensions, Image,Text, TouchableOpacity} from 'react-native';
 import { useFonts } from '@use-expo/font';
 import { useNavigation,useFocusEffect, useRoute } from '@react-navigation/native';
 import * as ScreenOrientation from 'expo-screen-orientation';
+import { ProgressBar} from 'react-native-paper';
 import Loading from './Loading';
 
 function SuccessN() {
   const route = useRoute();
   const { exercises,index,set} = route.params;
+  const progress = 0.2;
   const navigation = useNavigation();
   const [screenHeight, setHei] = useState(Dimensions.get('window').width);
   const [screenWidth, setWid] = useState(Dimensions.get('window').height);
@@ -62,6 +64,17 @@ function SuccessN() {
     position: 'absolute'
   }
 
+  const pbar = {
+    width: screenHeight*0.45,
+    height: screenWidth*0.4,
+    marginTop: screenHeight*0.3,
+    alignSelf: 'center',
+    borderRadius: screenWidth*0.05,
+    BarProp: '#F3831E',
+    position: 'absolute',
+    transform: [{ rotate: '-90deg' }]
+  }
+
   const clicked = () => {
     console.log('Clicked back');
     navigation.navigate('Cameras',{exercises: exercises, index: index, set: set});
@@ -82,6 +95,8 @@ function SuccessN() {
       <TouchableOpacity onPress={handleTouchStart} style={nextbutton}><Text style={nbts}>Finish</Text></TouchableOpacity>
 
       <TouchableOpacity onPress = {clicked}><Image source={require('../assets/back.png')} style={backbutton}/></TouchableOpacity>
+
+      <ProgressBar progress={(0.45*progress*screenHeight)/screenWidth} style={pbar} theme={{ colors: { primary: '#F3831E' } }}/>
 
     </View>
   ); 

@@ -19,6 +19,7 @@
     "@use-expo/font": "^2.0.0",
     "expo": "~50.0.13",
     "expo-av": "~13.10.5",
+    "expo-camera": "~14.1.1",
     "expo-font": "^11.10.3",
     "expo-image-picker": "^14.7.1",
     "expo-player": "^0.2.79",
@@ -28,14 +29,15 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "0.73.5",
+    "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "~2.14.0",
+    "react-native-paper": "^5.12.3",
     "react-native-progress": "^5.0.1",
     "react-native-svg": "14.1.0",
     "react-native-web": "~0.19.6",
     "react-navigation": "^5.0.0",
     "react-player": "^2.15.1",
-    "react-router-dom": "^6.22.2",
-    "expo-camera": "~14.1.1"
+    "react-router-dom": "^6.22.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

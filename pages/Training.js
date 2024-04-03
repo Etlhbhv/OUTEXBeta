@@ -201,7 +201,7 @@ function Training() {
 
       const start = () => {
         console.log('Clicked Start');
-        navigation.navigate('Exercise',{exercises: exercises, index: 0, set: 0});
+        navigation.navigate('Exercise',{exercises: exercises, index: 0, set: 0, score: 0,fscore: 0});
       }
 
       useFocusEffect(
