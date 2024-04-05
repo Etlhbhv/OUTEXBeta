@@ -207,7 +207,7 @@ const setdocs = async () =>{
 
   const clicked = () => {
     console.log('Clicked back');
-    navigation.goBack();
+    navigation.navigate('Profile');
   }
 
   useEffect(() => {

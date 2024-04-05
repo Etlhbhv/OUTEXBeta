@@ -25,7 +25,7 @@ function SignUp() {
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      navigation.navigate("MainP");}})
+      navigation.navigate("ProfileE");}})
   
   const textsignup = {
     color: '#ffffff',
@@ -88,7 +88,7 @@ function SignUp() {
     borderColor: 'black',
     borderWidth: 1,
     width: screenWidth*0.52,
-    marginTop: screenHeight*0.47,
+    marginTop: screenHeight*0.05,
     position: 'absolute',
     padding: 7,
     boxShadow: '0 2px 5px rgba(0, 0, 0, 1)'
@@ -98,7 +98,7 @@ function SignUp() {
     flexDirection: 'row', 
     justifyContent: 'center', 
     alignItems: 'center',
-    marginTop: screenHeight*0.8,
+    marginTop: screenHeight*0.15,
     padding: 15
   }
 
@@ -117,6 +117,17 @@ function SignUp() {
   fontSize: screenAverage*0.027,
   }
 
+  const rules = {
+    marginHorizontal: 10,
+    color: '#ffffff',
+  fontFamily: 'LeagueSpartan-SemiBold',
+  fontSize: screenAverage*0.027,
+  marginTop: screenHeight*0.47,
+  width: '60%',
+  alignSelf: 'center',
+  textAlign: 'center'
+  }
+
   const signinbutton = {
     backgroundColor: '#2A2B30',
     color: '#F3831E',
@@ -124,8 +135,7 @@ function SignUp() {
     fontSize: screenAverage*0.03,
     alignSelf: 'center',
     textAlign: 'center',
-    marginTop: screenHeight*0.85,
-    position: 'absolute',
+    marginTop: screenHeight*0.05
   }
 
   const signuptext = {
@@ -170,6 +180,7 @@ function SignUp() {
 
       <TextInput type={'password'} placeholder='Password' style={password} onChangeText={(text) => setPassword(text)} value={pass}/>
 
+      <Text style={rules}>When you sign up, you accept that your name, birthdate, height, weight and videos from your trainings, will be used by our company to improve your experience. All off your data will be stored confidentially.</Text>
       <TouchableOpacity onPress={handleSignUp} style={signupbutton}><Text style={signuptext}>Join<Text></Text></Text></TouchableOpacity>
 
       <View style={bottom}>

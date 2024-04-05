@@ -119,7 +119,7 @@ const [username, setName] = useState('');
 
   const clicked = async () => {
     console.log('Clicked back');
-    await navigation.goBack();
+    await navigation.navigate('MainP');
   }
 
   const signout = () => {

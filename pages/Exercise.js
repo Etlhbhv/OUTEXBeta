@@ -191,12 +191,13 @@ function Exercise() {
 
   const clicked = () => {
     console.log("Clicked back");
-    if (index == 0 && set == 0){
+    const routes = navigation.getState()?.routes;
+    if (index == 0 && set == 0 && routes[routes.length - 2] != 'SuccessN'){
       navigation.goBack();
     }
     else {
       if(set == 0){
-      navigation.navigate('SuccessN',{exercises: exercises, index: index-1});
+      navigation.navigate('SuccessN',{exercises: exercises, index: index-1,set:0});
     }
     else{
       navigation.navigate('Cameras',{exercises: exercises, index: index, set: set-1});
@@ -221,7 +222,7 @@ function Exercise() {
     return () => {
       unsubscribeBlur();
     };
-  }, [navigation,set])
+  }, [navigation,set,index])
   );
 
   if (!isLoaded) {

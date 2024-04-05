@@ -141,7 +141,7 @@ function SignIn() {
     fontSize: screenAverage*0.024,
     alignSelf: 'center',
     textAlign: 'center',
-    marginTop: screenHeight*0.55,
+    marginTop: screenHeight*0.57,
     position: 'absolute',
   }
 

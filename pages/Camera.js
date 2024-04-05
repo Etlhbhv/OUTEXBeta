@@ -1,18 +1,30 @@
 import React from 'react';
-import { useEffect, useState } from 'react';
-import { View,Dimensions, Image,Text, ImageBackground} from 'react-native';
+import { useEffect, useState, useRef } from 'react';
+import { View,Dimensions, Image,Text} from 'react-native';
 import { useFonts } from '@use-expo/font';
 import { useNavigation,useRoute, useFocusEffect } from '@react-navigation/native';
 import * as ScreenOrientation from 'expo-screen-orientation'
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import { ProgressBar } from 'react-native-paper';
 import { Camera } from 'expo-camera';
+import { getAuth} from "firebase/auth";
+import { initializeApp } from 'firebase/app';
+import firebaseConfig from '../firebaseConfig';
+import {getStorage, ref, uploadBytes, getDownloadURL} from 'firebase/storage';
+initializeApp(firebaseConfig);
+
+const storage = getStorage();
+const auth = getAuth();
 
 function Cameras() {
+  const uid = auth.currentUser?.uid;
+  const [isVisible, setIsVisible] = useState(false)
+  const dt = 100;
   const route = useRoute();
-  const [feed,setFeed] = useState(require('../assets/Logo.png'))
   const { exercises,index,set} = route.params;
-  const progress = 0.5;
+  const [progress, setProg] = useState(0);
+  const [vuri, setVuri] = useState('');
+  const [videoplays, setVideoplay] = useState(false);
   const navigation = useNavigation();
   const [screenHeight, setHei] = useState(Dimensions.get('window').width);
   const [screenWidth, setWid] = useState(Dimensions.get('window').height);
@@ -21,12 +33,11 @@ function Cameras() {
     'LeagueSpartan-SemiBold': require('../assets/fonts/LeagueSpartan-SemiBold.ttf')
     });
 
-    const sendToHostUrl = 'http://172.29.40.162:5000/send_to_host';
-    const recieveFromHostUrl = 'http://172.29.40.162:5000/send_to_client';
-    const [cameraRef, setCameraRef] = useState(null);
+    const cameraRef = useRef(null);
 
-  const handleTouchStart = () => {
+  const handleTouchStart = async () => {
     console.log('Clicked Skip');
+    await uploadframe();
     if (Object.keys(exercises[index.toString()].quant).length == set+1 && Object.keys(exercises).length == index+1){
       navigation.navigate('SuccessF',{exercises: exercises, index: index, set: set});
     }
@@ -36,64 +47,39 @@ function Cameras() {
       navigation.navigate('Exercise',{exercises: exercises, index: index, set: set+1});
     }
   }
-
-  const sendHost = async () => {
-    try {
-      const variableToSend = 'Hello from Expo app!';
-      await fetch(sendToHostUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ variable: variableToSend }),
-      });
-      console.log('Variable sent successfully');
-    } catch (error) {
-      console.error('Error sending variable:', error);
-    }
-  };
-
-  const recieveHost = async () => {
-    try {
-      const response = await fetch(recieveFromHostUrl);
-      if (!response.ok) {
-        throw new Error('Failed to fetch variable');
-      }
-      const data = await response.json();
-      console.log(data.message);
-    } catch (error) {
-      console.error('Error fetching variable:', error);
-    }
-  };
   
   const handleCaptureFrame = async () => {
-    if (cameraRef) {
-      try {
-        const photo = await cameraRef.takePictureAsync();
-        
-        const formData = new FormData();
-        formData.append('photo', {
-          uri: photo.uri,
-          type: 'image/jpeg',
-          name: 'photo.jpg',
-        });
+    if (!cameraRef.current || videoplays) return;
+    try {
+    const videoRecordPromise = cameraRef.current.recordAsync({mute: true});
+    setVuri(videoRecordPromise);
+    setVideoplay(true);
 
-        const response = await fetch(sendToHostUrl, {
-          method: 'POST',
-          body: formData,
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-
-        const processedPhoto = await response.blob();
-        setFeed({uri:processedPhoto});
-
-      } catch (error) {
-        console.error('Error capturing frame:', error);
-      }
+    } catch (error) {
+      console.error('Error: Failed to film video: ', error);
     }
   };
+
+  const uploadframe = async () => {
+    if (!cameraRef.current || !videoplays) return;
+    try {
+      cameraRef.current.stopRecording();
+      setVideoplay(false);
+      const video = await vuri
+      const response = await fetch(video.uri);
+      const blob = await response.blob();
+  
+      const storageRef = ref(storage, 'exercise/' + exercises[index].id + '/' + uid +  Date.now() + '.mp4');
+  
+        const uploadTaskSnapshot = await uploadBytes(storageRef, blob);
+        const downloadURL = await getDownloadURL(uploadTaskSnapshot.ref);
+  
+        console.log('Uploaded video URL:', downloadURL);
+  
+      } catch (error) {
+        console.error('Error: Failed to upload video: ', error);
+      }
+  }
 
   const background = {
     backgroundColor: '#2A2B30',
@@ -109,7 +95,7 @@ function Cameras() {
     borderRadius: 7,
     width: screenWidth*0.16,
     marginLeft: screenHeight*0.1,
-    marginTop: screenHeight*0.82,
+    marginTop: screenHeight*0.78,
     position: 'absolute',
     padding: 10
   }
@@ -125,7 +111,7 @@ function Cameras() {
   const pausebutton = {
     width: screenHeight*0.16,
     height: screenHeight*0.16,
-    marginTop: screenHeight*0.82,
+    marginTop: screenHeight*0.78,
     marginLeft: screenWidth*0.88,
     position: 'absolute'
   }
@@ -146,49 +132,81 @@ function Cameras() {
     textAlign:'center'
   }
 
-  const clicked = () => {
+  const clicked = async () => {
     console.log('Clicked back');
+    await uploadframe();
     navigation.navigate('Exercise',{exercises: exercises, index: index, set: set});
   }
 
   const pause = '../assets/Pause.png';
   const play = '../assets/Play.png';
-  const [current, setCurrent] = React.useState(true);
+  const [current, setCurrent] = React.useState(false);
   const [path, setPath] = React.useState(require(pause));
   const clickedPause = () => {
     if (current) {
         setPath(require(play));
         console.log('Clicked pause');
-        //sendHost();
-        handleCaptureFrame();
+        uploadframe();
     }
     else {
         setPath(require(pause));
         console.log('Clicked play');
-        recieveHost();
+        handleCaptureFrame();
     }
     setCurrent(!current);
   }
 
+  const handleCameraReady = () => {
+    setTimeout(() => {
+      setCurrent(true);
+      handleCaptureFrame();
+    }, 5000); // Adjust the delay time as needed
+  };
+
   useFocusEffect(
     React.useCallback(() => {
-    setHei(Dimensions.get('window').width);
-    setWid(Dimensions.get('window').height);
+      setIsVisible(true)
+    if (screenHeight>screenWidth){
+    setHei(Dimensions.get('window').height);
+    setWid(Dimensions.get('window').width);}
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
       console.log(status);
+      const {grantedAudio }= await Camera.requestMicrophonePermissionsAsync();
+      console.log(grantedAudio);
     })();
-  }, []));
+    const interval = setInterval(() => {
+      setProg(progress => {
+        if (progress > 1){
+          clearInterval(interval);
+          handleTouchStart();
+        }
+        if (current){
+          if (exercises[index.toString()].time){
+            return progress + 1/((exercises[index.toString()].quant[set.toString()]*1000)/dt);
+          }
+          else{
+            return progress + 1/((exercises[index.toString()].quant[set.toString()]*5000)/dt)
+          }
+        }
+        return progress;
+      });
+    }, dt);
+
+    return () => {
+      clearInterval(interval);
+      setIsVisible(false)
+    }
+  }, [current]));
 
   return (
     <View style={background}>
-     <Camera style={{height: '10%',width: '10%'}} type={Camera.Constants.Type.front} ref={ref => setCameraRef(ref)}/>
-     <ImageBackground
-        source={feed}
-        style={{ flex: 1, resizeMode: 'cover', justifyContent: 'center' }}
-      >
-     <View style={{backgroundColor: 'transparent', flex: 1}}>
+      {isVisible && 
+        <>
+          <Camera style={{height: '100%',width: '100%'}} type={Camera.Constants.Type.front} ref={cameraRef} onCameraReady={handleCameraReady}>
+
+          <View style={{backgroundColor: 'transparent', flex: 1}}>
       <TouchableOpacity onPress={handleTouchStart} style={nextbutton}><Text style={texts}>Skip</Text></TouchableOpacity>
 
       <TouchableOpacity onPress={clicked}><Image source={require('../assets/back.png')} style={backbutton}/></TouchableOpacity>
@@ -197,7 +215,9 @@ function Cameras() {
 
 <ProgressBar progress={0.8*progress} style={pbar} theme={{ colors: { primary: '#F3831E' } }}/>
 </View>
-</ImageBackground>
+</Camera>
+</>
+      }
     </View>
   ); 
 

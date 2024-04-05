@@ -1,19 +1,20 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
-import { View,Dimensions, Image,Text, TouchableOpacity} from 'react-native';
+import { View,Dimensions, Image,Text} from 'react-native';
 import { useFonts } from '@use-expo/font';
 import { useNavigation,useFocusEffect, useRoute } from '@react-navigation/native';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import { ProgressBar} from 'react-native-paper';
 import Loading from './Loading';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 function SuccessN() {
   const route = useRoute();
   const { exercises,index,set} = route.params;
-  const progress = 0.2;
+  const progress = 0.5;
   const navigation = useNavigation();
-  const [screenHeight, setHei] = useState(Dimensions.get('window').width);
-  const [screenWidth, setWid] = useState(Dimensions.get('window').height);
+  const [screenHeight, setHei] = useState(Dimensions.get('window').height);
+  const [screenWidth, setWid] = useState(Dimensions.get('window').width);
   const screenAverage = (screenWidth+(2*screenHeight))/3;
   const [isLoaded] = useFonts({
     'LeagueSpartan-SemiBold': require('../assets/fonts/LeagueSpartan-SemiBold.ttf')
@@ -22,6 +23,18 @@ function SuccessN() {
   const handleTouchStart = () => {
     console.log('Clicked Next')
     navigation.navigate('MainP');
+  }
+
+  const getorient = async () => {
+    const orient = await ScreenOrientation.getOrientationAsync();
+    if (orient == 1){
+      setHei(Dimensions.get('window').height);
+      setWid(Dimensions.get('window').width);
+    }
+    else { 
+      setHei(Dimensions.get('window').width);
+      setWid(Dimensions.get('window').height);
+    }
   }
 
   const background = {
@@ -77,12 +90,13 @@ function SuccessN() {
 
   const clicked = () => {
     console.log('Clicked back');
-    navigation.navigate('Cameras',{exercises: exercises, index: index, set: set});
+    navigation.navigate('Cameras',{exercises: exercises, index: index, set: Object.keys(exercises[index.toString()].quant).length-1});
   }
 
   useFocusEffect(
     React.useCallback(() => {
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
+    getorient();
   }, []));
 
   if (!isLoaded) {
